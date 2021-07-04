@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
-    utils.url = "github.numtide/flake-utils";
+    utils.url = "github:numtide/flake-utils";
   };
 
   outputs = { self, nixpkgs, utils }:
