@@ -7,7 +7,7 @@ with open("README.md", "r", encoding = "utf-8") as fh:
     long_description = fh.read()
 
 setup(name = 'org-voice-notes',
-      version = "1.0.0",
+      version = "1.0.1",
       description = "A tool to convert voice notes to an Org file.",
       long_descrniption = long_description,
       long_description_content_type = "text/markdown",

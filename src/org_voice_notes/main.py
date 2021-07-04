@@ -22,6 +22,7 @@ import os
 import os.path as osp
 import glob
 
+from datetime import datetime
 from tqdm import tqdm
 from queue import Queue
 
@@ -79,7 +80,8 @@ def main():
                 file_path = transcription.file_path
                 (base, file_name) = osp.split(file_path)
                 (base, folder) = osp.split(base)
-                output_file.write(f"\n* {folder}: {file_name}\n\n{return_val}\n")
+                ts = datetime.strptime(file_name, "%y%m%d_%H%M.mp3")
+                output_file.write(f"\n* <{ts.strftime('%Y-%m-%d %a %H:%M')}> {folder}\n\n{return_val}\n")
                 if args.delete:
                     transcription.delete_recording()
                     transcription.delete_transcription()
