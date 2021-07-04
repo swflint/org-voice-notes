@@ -26,6 +26,8 @@
           };
 
           pythonEnvironment = pkgs.python3.withPackages (ps: with ps; [
+            org-voice-notes
+            ipython
             requests
             jsonpickle
             tqdm
@@ -34,6 +36,7 @@
           developmentEnvironment = pkgs.mkShell {
             buildInputs = [
               packages.pythonEnvironment
+              packages.org-voice-notes
               pkgs.pre-commit
             ];
           };
