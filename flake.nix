@@ -16,7 +16,7 @@
         packages = rec {
           org-voice-notes = pkgs.python3.pkgs.buildPythonPackage {
             pname = "org_voice_notes";
-            version = "0.0.1";
+            version = "1.0.0";
             src = ./.;
             propagatedBuildInputs = with pkgs.python3.pkgs ; [
               requests
