@@ -69,7 +69,7 @@ def main():
     for file_name in tqdm(glob.iglob(f'{args.directory}/**/*.mp3')):
         transcriptions.append(Transcription(args.key, file_name))
 
-    with tqdm(total = len(transcriptions), description = 'Transcriptions remaining') as progress:
+    with tqdm(total = len(transcriptions), desc = 'Transcriptions remaining') as progress:
         while len(transcriptions) != 0:
             transcription = transcriptions.pop(0)
             return_val = transcription.get_transcription()

@@ -83,7 +83,7 @@ class Transcription:
                                         headers = {'authorization': self.api_key,
                                                'content-type': 'application/json'})
                 data = response.json()
-                self.paragraphs = list(map(x: x['text'], data['paragraphs']))
+                self.paragraphs = list(map(lambda x: x['text'], data['paragraphs']))
                 return self.paragraphs
         else:
             return None
