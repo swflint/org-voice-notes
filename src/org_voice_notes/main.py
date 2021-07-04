@@ -18,5 +18,73 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
+import os.path as osp
+import glob
+
+from tqdm import tqdm
+from queue import Queue
+
+from argparse import ArgumentParser
+
+from .transcription import Transcription
+
 def main():
-    pass
+    parser = ArgumentParser(description='A tool to convert voice notes to an Org file.')
+
+    parser.add_argument('--output', '-o',
+                        help = 'output file',
+                        dest='output',
+                        required = True)
+
+    parser.add_argument('--api-key', '-k',
+                        help = 'the assemblyai api key to use',
+                        dest = 'key')
+
+    parser.add_argument('--directory', '-d',
+                        help = 'the directory tree containing audio files',
+                        dest = 'directory',
+                        required = True)
+
+    parser.add_argument('--delete', '-D',
+                        help = 'delete transcription and audio file',
+                        dest = 'delete',
+                        default = False,
+                        action = 'store_true')
+
+    args = parser.parse_args()
+
+    if args.key == None:
+        if os.environ.get('ASSEMBLY_AI_KEY'):
+            args.key = os.environ.get('ASSEMBLY_AI_KEY')
+        else:
+            parser.error("An API key must be provided as an argument or in the ASSEMBLY_AI_KEY environment variable.")
+
+    if osp.exists(args.output):
+        output_file = open(args.output, 'a')
+    else:
+        output_file = open(args.output, 'w')
+    
+    transcriptions = []
+    for file_name in tqdm(glob.iglob(f'{args.directory}/**/*.mp3')):
+        transcriptions.append(Transcription(args.key, file_name))
+
+    with tqdm(total = len(transcriptions), description = 'Transcriptions remaining') as progress:
+        while len(transcriptions) != 0:
+            transcription = transcriptions.pop(0)
+            return_val = transcription.get_transcription()
+            if return_val == None:
+                transcriptions.append(transcription)
+            else:
+                file_path = transcription.file_path
+                (base, file_name) = osp.split(file_path)
+                (base, folder) = osp.split(base)
+                output_file.write(f"\n* {folder}: {file_name}\n\n{return_val}\n")
+                if args.delete:
+                    transcription.delete_recording()
+                    transcription.delete_transcription()
+                progress.update(1)
+
+    output_file.close()
+
+    
